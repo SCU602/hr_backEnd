@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hr.mapper.HolidayMapper">
+    <!--查询个人假期-->
+    <select id="getUserHoliday" parameterType="String" resultType="org.hr.model.HolidayDetail">
+        SELECT * FROM holiday WHERE user = #{user}
+    </select>
+    <!--注意数据库-->
+    <!--个人假期明细
+    <select id="getUserHolidayDetail" parameterType="String" resultType="org.hr.model.HolidayDetail">
+        SELECT * FROM holiday WHERE user = #{user}
+    </select>-->
+
+    <!--查询所有人员请假（模糊查询）-->
+    <select id="getUserHolidays" parameterType="org.hr.modelOv.UserHoliday" resultType="org.hr.model.HolidayDetail">
+        select * from holiday
+        <where>
+            <if test="username !=null and username != ''">
+                user like concat(concat('%',#{username}),'%')
+            </if>
+        </where>
+        limit #{current_index},#{page_size}
+    </select>
+
+    <!--查询所有人员请假数（模糊查询）-->
+    <select id="getUserHolidayNum" parameterType="org.hr.modelOv.UserHoliday" resultType="Integer">
+        select count(*) num from holiday
+        <where>
+            <if test="username !=null and username != ''">
+                user like concat(concat('%',#{username}),'%')
+            </if>
+        </where>
+    </select>
+
+    <!--修改请假-->
+    <update id="modifyHoliday" parameterType="org.hr.model.HolidayDetail">
+        update holiday set bdate=#{bdate}, edate=#{edate},date_num=#{date_num},notes=#{notes}
+        where id=#{id}
+    </update>
+
+    <!-- 申请新增请假-->
+    <insert id="addHolidayFlow" parameterType="org.hr.model.HolidayFlow">
+        INSERT INTO hr.holiday_flow (id, user_name, type,apply_date, bdate, edate, date_num, state,notes)
+        VALUES (replace(uuid(),'-',''),#{user_name},#{type}, #{apply_date}, #{bdate}, #{edate}, #{date_num}, #{state},#{notes})
+    </insert>
+
+    <!-- 新增请假-->
+    <insert id="addHoliday" parameterType="org.hr.model.HolidayDetail">
+        INSERT INTO hr.holiday (id, `user`,  bdate, edate, apply_date,date_num,notes)
+        VALUES (replace(uuid(),'-',''),#{user}, #{bdate}, #{edate}, #{apply_date},#{date_num},#{notes})
+    </insert>
+
+    <!-- 申请修改请假-->
+    <insert id="modifyHolidayFlow" parameterType="org.hr.model.HolidayFlow">
+        INSERT INTO hr.holiday_flow (id, user_name, pre_id, type,apply_date, bdate, edate, date_num, state,notes)
+        VALUES (replace(uuid(),'-',''),#{user_name}, #{pre_id},#{type},#{apply_date}, #{bdate}, #{edate}, #{date_num}, #{state},#{notes})
+    </insert>
+
+
+
+    <!--查询本人申请的所有请假-->
+    <select id="getUserHolidayFlow" parameterType="org.hr.modelOv.UserHoliday" resultType="org.hr.model.HolidayFlow">
+        SELECT * FROM holiday_flow WHERE user_name=#{username}
+        limit #{current_index},#{page_size}
+    </select>
+    <!--查询本人申请的所有请假数量-->
+    <select id="getUserHolidayFlowNum" parameterType="org.hr.modelOv.UserHoliday" resultType="integer">
+        SELECT count(*) num FROM holiday_flow WHERE user_name=#{username}
+    </select>
+    <!--查询待审批的流程-->
+    <select id="getProvingHolidayFlow" parameterType="org.hr.modelOv.UserHoliday" resultType="org.hr.model.HolidayFlow">
+        SELECT * FROM holiday_flow
+        <where>
+            <if test="1==1">
+                state=0
+            </if>
+            <if test="username != null and username != ''">
+                and user_name like concat(concat('%',#{username}),'%')
+            </if>
+        </where>
+        order by apply_date
+        limit #{current_index},#{page_size}
+    </select>
+
+    <!--查询待审批的流程数量-->
+    <select id="getProvingHolidayFlowNum" parameterType="org.hr.modelOv.UserHoliday" resultType="Integer">
+        SELECT count(*) num FROM holiday_flow
+        <where>
+            <if test="1==1">
+                state=0
+            </if>
+            <if test="username != null and username != ''">
+                and user_name like concat(concat('%',#{username}),'%')
+            </if>
+        </where>
+    </select>
+
+    <!--通过 id查询请假流程-->
+    <select id="getHolidayFlowById" parameterType="String" resultType="org.hr.model.HolidayFlow">
+        SELECT * FROM holiday_flow WHERE id= #{id}
+    </select>
+
+    <!--更新流程状态和审批信息-->
+    <update id="updateHolidayFlowState" parameterType="org.hr.model.HolidayFlow">
+        update holiday_flow set state=#{state},approver_id=#{approver_id},approve_date=#{approve_date},approve_result=#{approve_result}
+        where id=#{id}
+    </update>
+
+</mapper>
