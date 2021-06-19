@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hr.mapper.PerformanceMapper">
+    <!--新增个人签到-->
+    <insert id="signIn" parameterType="org.hr.model.PerformanceFlow">
+        INSERT INTO performance_flow (id, username, btime, etime, type, state)
+        VALUES (replace(uuid(),'-',''), #{username}, #{btime}, null, 0, 1)
+    </insert>
+
+    <!--增加一条个人当月当日工作时长记录-->
+    <insert id="addSign" parameterType="org.hr.model.Performance">
+        insert into performance (id, username, total_time, month, day, year)
+        values (replace(uuid(),'-',''), #{username}, #{total_time}, #{month}, #{day}, #{year})
+    </insert>
+
+    <!--签退功能，更新个人当天的签到记录-->
+    <update id="signUp" parameterType="org.hr.model.PerformanceFlow">
+        update performance_flow set etime=#{etime},state=0,type=1,daily_time=#{daily_time} where username=#{username} and state=1
+    </update>
+
+    <!--查看所有人签到记录-->
+    <select id="getUsersAllSigns" resultType="org.hr.model.PerformanceFlow">
+        select * from performance_flow
+    </select>
+
+    <!--普通用户查看个人所有签到记录-->
+    <select id="getUserAllSigns" parameterType="String" resultType="org.hr.model.PerformanceFlow">
+        select * from performance_flow where username=#{username}
+    </select>
+
+    <!--辅助函数，查看个人当天签到记录-->
+    <select id="getTodaySign" parameterType="org.hr.model.PerformanceFlow" resultType="org.hr.model.PerformanceFlow">
+        select * from performance_flow where username=#{username} and state=1
+    </select>
+
+</mapper>

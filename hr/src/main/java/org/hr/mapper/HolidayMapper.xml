@@ -7,11 +7,6 @@
     <select id="getUserHoliday" parameterType="String" resultType="org.hr.model.HolidayDetail">
         SELECT * FROM holiday WHERE user = #{user}
     </select>
-    <!--注意数据库-->
-    <!--个人假期明细
-    <select id="getUserHolidayDetail" parameterType="String" resultType="org.hr.model.HolidayDetail">
-        SELECT * FROM holiday WHERE user = #{user}
-    </select>-->
 
     <!--查询所有人员请假（模糊查询）-->
     <select id="getUserHolidays" parameterType="org.hr.modelOv.UserHoliday" resultType="org.hr.model.HolidayDetail">

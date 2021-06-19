@@ -1,6 +1,5 @@
 package org.hr.controller;
 
-import com.sun.corba.se.spi.ior.ObjectKey;
 import org.hr.model.OrgPost;
 import org.hr.modelOv.PostOV;
 import org.hr.service.OrgPostService;
