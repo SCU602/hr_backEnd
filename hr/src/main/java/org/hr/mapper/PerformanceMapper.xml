@@ -17,7 +17,16 @@
 
     <!--签退功能，更新个人当天的签到记录-->
     <update id="signUp" parameterType="org.hr.model.PerformanceFlow">
-        update performance_flow set etime=#{etime},state=0,type=1,daily_time=#{daily_time} where username=#{username} and state=1
+        update performance_flow set etime=#{etime},type=1,daily_time=#{daily_time} where username=#{username} and state=1
+    </update>
+
+    <!--将今日正常签到但未签退的记录 更新-->
+    <update id="updateStateAndType">
+        update performance_flow set type=2 where state=1 and type=0
+    </update>
+    <!--今天的签到记录变为非今天-->
+    <update id="updateState">
+        update performance_flow set state=0 where state=1
     </update>
 
     <!--查看所有人签到记录-->

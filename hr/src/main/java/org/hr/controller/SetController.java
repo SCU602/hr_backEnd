@@ -1,10 +1,14 @@
 package org.hr.controller;
 
 import org.hr.model.Menu;
+import org.hr.model.PerformanceFlow;
+import org.hr.model.User;
 import org.hr.service.MenuService;
+import org.hr.service.PerformanceService;
 import org.hr.util.AdminUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +23,8 @@ import java.util.Map;
 public class SetController {
 
     @Autowired
+    PerformanceService performanceService;
+    @Autowired
     MenuService menuService;
     @Autowired
     AdminUtil adminUtil;
@@ -29,22 +35,33 @@ public class SetController {
         SecurityContextImpl securityContext = (SecurityContextImpl) session.getAttribute("SPRING_SECURITY_CONTEXT");
         String username=((UserDetails)securityContext.getAuthentication().getPrincipal()).getUsername();
         Map<String,Object> map=new HashMap<>();
-        boolean isAdmin=false;
-        if(adminUtil.isAdmin(username))
-            isAdmin = true;
-        else
-            isAdmin = false;
+        boolean isAdmin = adminUtil.isAdmin(username);
         // 查询所有一级菜单
         List<Menu> menu1=menuService.getMenu_1();
         for(Menu menu:menu1){
             Menu menu_in=new Menu();
             menu_in.setSup_id(menu.getId());
-            if(isAdmin)
+            if(isAdmin) {
                 menu_in.setRights("/admin");
-            else
+            } else {
                 menu_in.setRights("/user");
+            }
             List<Menu> menu2=menuService.getMenu_2(menu_in);
             menu.setChildren(menu2);
+        }
+        //获取用户名
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PerformanceFlow tmp = performanceService.getTodaySign(user.getUsername());
+        if(tmp != null){
+            map.put("sign",200);
+            map.put("signNotes","签退");
+            if(tmp.getType() == 1){
+                map.put("sign",201);
+                map.put("signNotes","已签退");
+            }
+        }else{
+            map.put("sign",202);
+            map.put("signNotes","签到");
         }
         //返回的map
         map.put("state",200);

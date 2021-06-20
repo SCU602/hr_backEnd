@@ -5,6 +5,7 @@ import org.hr.model.PerformanceFlow;
 import org.hr.model.User;
 import org.hr.service.PerformanceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,7 +48,7 @@ public class PerformanceController {
 
         performanceFlow.setUsername(user.getUsername());
         performanceFlow.setEtime(eTime);
-        performanceFlow.setDaily_time((int) ((performanceFlow.getEtime().getTime() - performanceFlow.getBtime().getTime()) / (1000 * 60 * 60 * 24)));
+        performanceFlow.setDaily_time((int) ((performanceFlow.getEtime().getTime() - performanceFlow.getBtime().getTime()) / (1000 * 60 * 60 * 24)+1));
         performanceService.signUp(performanceFlow);
 
         //签退后更新performance表，新建一条记录
@@ -99,4 +100,9 @@ public class PerformanceController {
         return map;
     }
 
+    @Scheduled(cron = "0  0  0  *  *  ?")
+    public void updatePerformanceFlow(){
+        performanceService.updatePerformanceFlowStateAndType();
+        performanceService.updateState();
+    }
 }

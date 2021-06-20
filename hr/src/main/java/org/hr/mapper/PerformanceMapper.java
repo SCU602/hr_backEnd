@@ -41,4 +41,15 @@ public interface PerformanceMapper {
      * 增加一条个人当月当日工作时长记录
      */
     void addSign(Performance performance);
+
+    /**
+     * 更新 正常签到但未签退的 记录
+     */
+    void updateStateAndType();
+
+    /**
+     * 更新 今日的签到记录为 非今日
+     */
+    void updateState();
+
 }
