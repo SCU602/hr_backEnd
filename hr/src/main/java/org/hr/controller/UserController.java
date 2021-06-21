@@ -1,13 +1,11 @@
 package org.hr.controller;
 
 import org.hr.mapper.UserMapper;
-import org.hr.model.User;
-import org.hr.model.UserInfo;
-import org.hr.model.UserPost;
-import org.hr.model.UserRole;
+import org.hr.model.*;
 import org.hr.modelOv.UserOV;
 import org.hr.modelOv.UserPostOV;
 import org.hr.modelOv.UserSalary;
+import org.hr.service.PerformanceService;
 import org.hr.service.UserInfoService;
 import org.hr.service.UserRoleService;
 import org.hr.service.UserService;
@@ -18,9 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -34,7 +30,8 @@ public class UserController {
     AdminUtil adminUtil;
     @Autowired
     RedisTemplate<String,String> redisTemplate;
-
+    @Autowired
+    PerformanceService performanceService;
     /**
      * 注册用户
      * @return
@@ -278,6 +275,7 @@ public class UserController {
         User user=(User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username=user.getUsername();
         UserInfo userInfo=userInfoService.findUserInfoByUsername(username);
+
         if(userInfo!=null){
             map.put("state",200);
             map.put("msg","查询个人信息成功");
@@ -372,6 +370,20 @@ public class UserController {
         Map<String,Object> map=new HashMap<>();
         User user=(User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserSalary userSalary=userInfoService.getUserSalary(user.getUsername());
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.get(Calendar.DAY_OF_MONTH);
+        Performance performance = new Performance();
+        performance.setMonth(calendar.get(Calendar.MONTH)+1);
+        performance.setUsername(user.getUsername());
+        Integer totalTime = performanceService.getUserTotalTime(performance);
+        System.out.println(user.getUsername()+": "+performance.getMonth()+": "+totalTime);
+        if(totalTime!=null){
+            userSalary.setSalary(userSalary.getSalary()*totalTime);
+        }else{
+            userSalary.setSalary((float)0);
+        }
         map.put("state",200);
         map.put("msg","获取本人薪酬成功");
         map.put("data",userSalary);

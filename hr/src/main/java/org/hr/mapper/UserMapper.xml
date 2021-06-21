@@ -37,7 +37,8 @@
     </update>
     <!-- 删除用户 -->
     <select id="deleteUser" parameterType="String">
-        delete from user where username=#{username}
+        delete from user where username=#{username};
+        delete from performance_flow where username=#{username}
     </select>
     <!--修改用户密码-->
     <update id="updateUserPassword" parameterType="org.hr.model.User">

@@ -1,21 +1,24 @@
 package org.hr.controller;
 
 import org.hr.model.OrgPost;
+import org.hr.model.Performance;
 import org.hr.model.Salary;
+import org.hr.model.User;
 import org.hr.modelOv.SalaryOV;
+import org.hr.service.PerformanceService;
 import org.hr.service.SalaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class SalaryController {
     @Autowired
     SalaryService salaryService;
-
+    @Autowired
+    PerformanceService performanceService;
     //新增薪酬
     @PostMapping("/admin/create_salary")
     public Object createSalary(@RequestBody Salary salary){
@@ -74,6 +77,7 @@ public class SalaryController {
     public Object getSalaryByNotes(String notes){
         Map<String,Object> map=new HashMap<>();
         Salary salary=salaryService.findSalaryByNotes(notes);
+
         map.put("state",200);
         map.put("msg","查询薪酬成功");
         map.put("data",salary);

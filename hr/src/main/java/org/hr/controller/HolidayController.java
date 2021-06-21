@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class HolidayController {
@@ -67,8 +64,19 @@ public class HolidayController {
         holidayFlow.setApply_date(df.parse(df.format(new Date())));
         holidayFlow.setDate_num((int) ((holidayFlow.getEdate().getTime()-holidayFlow.getBdate().getTime()) / (1000 * 60 * 60 * 24)));
         holidayFlow.setNotes(holidayFlow.getNotes());
-        holidayFlow.setNotes(holidayFlow.getNotes());
-        
+
+        Calendar   calendar = new GregorianCalendar();
+        calendar.setTime(holidayFlow.getBdate());
+        calendar.add(calendar.DATE,1); //把日期往后增加一天,整数  往后推,负数往前移动
+        holidayFlow.setBdate(calendar.getTime()); //这个时间就是日期往后推一天的结果
+
+        Calendar   calendar1 = new GregorianCalendar();
+        calendar1.setTime(holidayFlow.getEdate());
+        calendar1.add(calendar1.DATE,1); //把日期往后增加一天,整数  往后推,负数往前移动
+        holidayFlow.setEdate(calendar1.getTime()); //这个时间就是日期往后推一天的结果
+        System.out.println(holidayFlow.getBdate());
+        System.out.println(holidayFlow.getEdate());
+
         holidayFlow.setState(0);
         Integer result = holidayService.addHolidayFlow(holidayFlow);
         if(result==1){
@@ -94,7 +102,19 @@ public class HolidayController {
         holidayFlow.setApply_date(df.parse(df.format(new Date())));
         holidayFlow.setDate_num((int) ((holidayFlow.getEdate().getTime()-holidayFlow.getBdate().getTime()) / (1000 * 60 * 60 * 24)));
         holidayFlow.setNotes(holidayFlow.getNotes());
-        holidayFlow.setNotes(holidayFlow.getNotes());
+        //date=new   date(); //取时间
+        Calendar   calendar = new GregorianCalendar();
+        calendar.setTime(holidayFlow.getBdate());
+        calendar.add(calendar.DATE,1); //把日期往后增加一天,整数  往后推,负数往前移动
+        holidayFlow.setBdate(calendar.getTime()); //这个时间就是日期往后推一天的结果
+
+        Calendar   calendar1 = new GregorianCalendar();
+        calendar1.setTime(holidayFlow.getEdate());
+        calendar1.add(calendar1.DATE,1); //把日期往后增加一天,整数  往后推,负数往前移动
+        holidayFlow.setEdate(calendar1.getTime()); //这个时间就是日期往后推一天的结果
+
+        System.out.println(holidayFlow.getBdate());
+        System.out.println(holidayFlow.getEdate());
 
         holidayFlow.setState(0);
         Integer result = holidayService.modifyHolidayFlow(holidayFlow);

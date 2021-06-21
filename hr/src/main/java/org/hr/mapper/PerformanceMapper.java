@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Param;
 import org.hr.model.Performance;
 import org.hr.model.PerformanceFlow;
 import org.hr.model.User;
+import org.hr.modelOv.PerformanceOV;
 
 import java.util.Date;
 import java.util.List;
@@ -25,7 +26,7 @@ public interface PerformanceMapper {
     /**
      * 查看所有人签到记录
      */
-    List<PerformanceFlow> getUsersAllSigns();
+    List<PerformanceFlow> getUsersAllSigns(PerformanceOV perform);
 
     /**
      * 普通用户查看个人所有签到记录
@@ -52,4 +53,8 @@ public interface PerformanceMapper {
      */
     void updateState();
 
+    /**
+     * 查询 用户本月工作时长
+     */
+    Integer getUserTotalTime(Performance performance);
 }

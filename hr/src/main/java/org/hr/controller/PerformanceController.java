@@ -3,6 +3,7 @@ package org.hr.controller;
 import org.hr.model.Performance;
 import org.hr.model.PerformanceFlow;
 import org.hr.model.User;
+import org.hr.modelOv.PerformanceOV;
 import org.hr.service.PerformanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -48,7 +49,13 @@ public class PerformanceController {
 
         performanceFlow.setUsername(user.getUsername());
         performanceFlow.setEtime(eTime);
-        performanceFlow.setDaily_time((int) ((performanceFlow.getEtime().getTime() - performanceFlow.getBtime().getTime()) / (1000 * 60 * 60 * 24)+1));
+        Integer realTime=(int) ((performanceFlow.getEtime().getTime() - performanceFlow.getBtime().getTime()) / (1000 * 60 * 60 * 24)+1);
+        Integer time=realTime;
+        Integer normalTime = 6;
+        if (realTime > normalTime){
+            time = normalTime + (realTime-normalTime) * 2;
+        }
+        performanceFlow.setDaily_time(time);
         performanceService.signUp(performanceFlow);
 
         //签退后更新performance表，新建一条记录
@@ -67,9 +74,13 @@ public class PerformanceController {
     }
 
     @GetMapping("/admin/getAllSigns")
-    public Object getUsersAllSigns() {
+    public Object getUsersAllSigns(String username,Integer current_index,Integer page_size) {
         Map<String, Object> map = new HashMap<>();
-        List<PerformanceFlow> list = performanceService.getUsersAllSigns();
+        PerformanceOV perform = new PerformanceOV();
+        perform.setUsername(username);
+        perform.setCurrent_index(current_index);
+        perform.setPage_size(page_size);
+        List<PerformanceFlow> list = performanceService.getUsersAllSigns(perform);
         if (list != null) {
             map.put("state", 200);
             map.put("data", list);

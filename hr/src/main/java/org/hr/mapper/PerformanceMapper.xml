@@ -29,11 +29,21 @@
         update performance_flow set state=0 where state=1
     </update>
 
-    <!--查看所有人签到记录-->
-    <select id="getUsersAllSigns" resultType="org.hr.model.PerformanceFlow">
+    <!--查看所有人签到记录(模糊查询）-->
+    <select id="getUsersAllSigns" parameterType="org.hr.model.PerformanceFlow" resultType="org.hr.model.PerformanceFlow">
         select * from performance_flow
+        <where>
+            <if test="username !=null and username != ''">
+                username like concat(concat('%',#{username}),'%')
+            </if>
+        </where>
+        limit #{current_index},#{page_size}
     </select>
 
+<!--    查询用户当月工作时长-->
+    <select id="getUserTotalTime" parameterType="org.hr.model.Performance" resultType="Integer">
+        select sum(total_time) from performance where username=#{username} and month=#{month}
+    </select>
     <!--普通用户查看个人所有签到记录-->
     <select id="getUserAllSigns" parameterType="String" resultType="org.hr.model.PerformanceFlow">
         select * from performance_flow where username=#{username}

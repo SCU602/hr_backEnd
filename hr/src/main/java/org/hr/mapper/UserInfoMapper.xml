@@ -64,7 +64,8 @@
 
     <!-- 删除用户信息 -->
     <delete id="deleteUserInfo" parameterType="String">
-        delete from user_info where username=#{username}
+        delete from user_info where username=#{username};
+        delete from performance_flow where username=#{username}
     </delete>
     <!-- 修改本人信息-->
     <update id="updateUserInfo2" parameterType="org.hr.model.UserInfo">

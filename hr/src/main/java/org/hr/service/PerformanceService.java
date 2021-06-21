@@ -4,6 +4,7 @@ import org.hr.mapper.PerformanceMapper;
 import org.hr.model.Performance;
 import org.hr.model.PerformanceFlow;
 import org.hr.model.User;
+import org.hr.modelOv.PerformanceOV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
@@ -33,10 +34,9 @@ public class PerformanceService {
     /**
      * 管理员查看所有人签到记录
      */
-    public List<PerformanceFlow> getUsersAllSigns() {
-        return performanceMapper.getUsersAllSigns();
+    public List<PerformanceFlow> getUsersAllSigns(PerformanceOV perform){
+        return performanceMapper.getUsersAllSigns(perform);
     }
-
     /**
      * 普通用户查看个人所有签到记录
      */
@@ -70,5 +70,9 @@ public class PerformanceService {
      */
     public void updateState() {
         performanceMapper.updateState();
+    }
+
+    public Integer getUserTotalTime(Performance performance) {
+        return performanceMapper.getUserTotalTime(performance);
     }
 }
