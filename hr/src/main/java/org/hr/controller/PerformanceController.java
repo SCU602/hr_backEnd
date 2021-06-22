@@ -51,7 +51,7 @@ public class PerformanceController {
         performanceFlow.setEtime(eTime);
         Integer realTime=(int) ((performanceFlow.getEtime().getTime() - performanceFlow.getBtime().getTime()) / (1000 * 60 * 60 * 24)+1);
         Integer time=realTime;
-        Integer normalTime = 6;
+        Integer normalTime = 8;
         if (realTime > normalTime){
             time = normalTime + (realTime-normalTime) * 2;
         }
