@@ -38,7 +38,13 @@
     <!-- 删除用户 -->
     <select id="deleteUser" parameterType="String">
         delete from user where username=#{username};
-        delete from performance_flow where username=#{username}
+        delete from user_info where username=#{username};
+        delete from performance_flow where username=#{username};
+        delete from performance where username=#{username};
+        delete from certificate_flow where user_name=#{username};
+        delete from employee_certificate where user=#{username};
+        delete from holiday where user=#{username};
+        delete from holiday_flow where user_name=#{username}
     </select>
     <!--修改用户密码-->
     <update id="updateUserPassword" parameterType="org.hr.model.User">
