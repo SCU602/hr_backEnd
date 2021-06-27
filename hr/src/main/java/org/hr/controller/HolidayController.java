@@ -135,7 +135,16 @@ public class HolidayController {
         Map<String,Object> map=new HashMap<>();
         DateFormat df= new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         holidayDetail.setApply_date(df.parse(df.format(new Date())));
+        holidayDetail.setDate_num((int) ((holidayDetail.getEdate().getTime()-holidayDetail.getBdate().getTime()) / (1000 * 60 * 60 * 24)));
+        Calendar   calendar = new GregorianCalendar();
+        calendar.setTime(holidayDetail.getBdate());
+        calendar.add(calendar.DATE,1); //把日期往后增加一天,整数  往后推,负数往前移动
+        holidayDetail.setBdate(calendar.getTime()); //这个时间就是日期往后推一天的结果
 
+        Calendar   calendar1 = new GregorianCalendar();
+        calendar1.setTime(holidayDetail.getEdate());
+        calendar1.add(calendar1.DATE,1); //把日期往后增加一天,整数  往后推,负数往前移动
+        holidayDetail.setEdate(calendar1.getTime()); //这个时间就是日期往后推一天的结果
         Integer result=holidayService.modifyHoliday(holidayDetail);
         if(result ==1){
             map.put("state",200);
